@@ -1,8 +1,8 @@
 import threading
 import socket
 
-host = 'ip example : 127.0.0.1'
-port = 'port example : 8888'
+host = '127.0.0.1'
+port = 8888
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((host, port))
@@ -27,7 +27,7 @@ def handle(client):
             clients.remove(client)
             client.close()
             username = usernames[index]
-            broadcast(f'{username} keluar dari obrolan!'.encode('ascii'))
+            broadcast(f'-->{username} keluar dari obrolan!'.encode('ascii'))
             usernames.remove(username)
             break
 
@@ -35,19 +35,20 @@ def handle(client):
 def receive():
     while True:
         client, address = s.accept()
-        print(f"terhubung dengan {str(address)}")
-
-        client.send('USER'.encode('ascii'))
+        print(f"terhubung dengan alamat {str(address)}")
+        client.send(
+            'Selamat Data Di Applikasi Chat UAS NetProg'.encode('ascii'))
         username = client.recv(1024).decode('ascii')
         usernames.append(username)
         clients.append(client)
 
         print(f'Dari user {username}')
-        broadcast(f'{username} tergabung dalam obrolan'.encode('ascii'))
-        client.send('terhubung ke server '.encode('ascii'))
+        client.send('terhubung ke server \n'.encode('ascii'))
+        broadcast(f'{username} tergabung dalam obrolan :D'.encode('ascii'))
+        client.send('\n Masukkan Pesan: '.encode('ascii'))
 
         thread = threading.Thread(target=handle, args=(client,))
-        thread.start
+        thread.start()
 
 
 print('server is listening...')
