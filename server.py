@@ -34,23 +34,29 @@ def handle(client):
 
 def receive():
     while True:
-        client, address = s.accept()
+        try:
+            client, address = s.accept()
+        except KeyboardInterrupt:
+            print('Server dimatikan!\n')
+            client.close()
+            break
         print(f"terhubung dengan alamat {str(address)}")
         client.send(
             'Selamat Data Di Applikasi Chat UAS NetProg'.encode('ascii'))
         username = client.recv(1024).decode('ascii')
         usernames.append(username)
         clients.append(client)
-
         print(f'Dari user {username}')
+        print(f'{usernames} Daftar User')
         client.send('terhubung ke server \n'.encode('ascii'))
-        broadcast(f'{username} tergabung dalam obrolan :D'.encode('ascii'))
+        broadcast(
+            f'{username} tergabung dalam obrolan :D \n'.encode('ascii'))
+        broadcast(f'Anggota chat -> {usernames}'.encode('ascii'))
         client.send('\n Masukkan Pesan: '.encode('ascii'))
-
         thread = threading.Thread(target=handle, args=(client,))
         thread.start()
+    s.close()
 
 
 print('server is listening...')
-
 receive()
